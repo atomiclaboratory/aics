@@ -1,0 +1,25 @@
+{
+  "input": [
+    "src/**/*.ts",
+    "src/**/*.js"
+  ],
+  "output": ".ai-index.md",
+  "budget": 32000,
+  "tiers": {
+    "protected": [
+      "src/core/**"
+    ],
+    "skeleton": [
+      "src/styles/**",
+      "src/templates/**"
+    ]
+  },
+  "secrets": {
+    "patterns": [
+      "*KEY*",
+      "*TOKEN*",
+      "password",
+      "SECRET"
+    ]
+  }
+}

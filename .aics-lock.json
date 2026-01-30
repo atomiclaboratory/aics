@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "files": {
+    "src/cli/index.ts": "a23281bf7618b4595ff385cd9652ed0868f3bacd2d0ffefbc20cc6f77f4d4455",
+    "src/core/cache.ts": "d84c160decd2a2cf4b7374b8ccf46d5d25d4d7621a3f6847ba7888aea7cad3ee",
+    "src/core/config.ts": "4f931e6429f642838c9f12842c321eb830099f82e17139f4a76acc24e65a9f0c",
+    "src/core/pipeline.ts": "f3d657ab57ebb95332ce31d83b9b3d7680593c8ab698fd8982e34fae0662b82e",
+    "src/engine/anchors.ts": "807c28c8e43e7dae721d783f32ce5f463c794bf48072d1534a70a473ea474937",
+    "src/engine/sanitizer.ts": "4413c0b4723e3f28f8b88bc7afa60ceecedd9614659d70d1362510a79bf6cd20",
+    "src/engine/scanner.ts": "3b59ed7177c29c8674fd46cc44efe8cce43c25d0d72eeeceba6c0bfceeaf9f8f",
+    "src/engine/tier-manager.ts": "1f449741b3a05396a9e0f77c2a6668b59b4e88ea53ba5fad239a5c8cdecdb2ba",
+    "src/engine/universal.ts": "d4c351084994452ef6da0320cc88afd46fe7f88b7116d41b136b08a6be706297",
+    "src/types/index.ts": "a57534d18e05edf6f202a9023f3cfbca6270b353b600aee0ff5540d44d3b585b",
+    "src/utils/logger.ts": "6792c8d951cfd6af8cd883356886534e7b2aa680d03049e183b1a910a1cb216d",
+    "src/writers/markdown.ts": "47a3eb0b1e9fa5ad008e82c2b2f545985a841b646146aeab43d5ad083b9d70ee",
+    "src/cli/commands/check.ts": "58343c02cec98fffebc63da36e67b31c01ad9adb71ae60a6bfd99c7386fbcacf",
+    "src/cli/commands/gen.ts": "c919e0793001b84b4d2239e0d535335299c510410e7bfa32d8c47bb254c2ade0",
+    "src/cli/commands/init.ts": "183fbc81a2e0eeefdf8a122a24d94872e14657bedf442c2011723a1cb866b033",
+    "src/cli/commands/install-hook.ts": "ba1695e9688c22b98b16c93918cf7b11bcd09d08e3c282abc02fda5b97d0fd40"
+  }
+}
