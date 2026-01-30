@@ -11,6 +11,14 @@
     "bin",
     "assets"
   ],
+  "homepage": "https://aics.atomic-lab.org/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atomiclaboratory/aics.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atomiclaboratory/aics/issues"
+  },
   "scripts": {
     "build": "tsup",
     "start": "node dist/index.js",
@@ -23,14 +31,17 @@
     "ai",
     "context",
     "generator",
-    "tree-sitter"
+    "tree-sitter",
+    "llm",
+    "agent",
+    "documentation"
   ],
   "author": "Ivan Tomic - aTomic Lab <atomic.research.lab@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@types/cli-progress": "^3.11.6",
     "chalk": "^4.1.2",
-    "chokidar": "^3.6.0", 
+    "chokidar": "^3.6.0",
     "cli-progress": "^3.12.0",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
@@ -39,7 +50,7 @@
     "isbinaryfile": "^5.0.0",
     "js-tiktoken": "^1.0.10",
     "minimatch": "^9.0.3",
-    "p-limit": "^5.0.0", 
+    "p-limit": "^5.0.0",
     "web-tree-sitter": "^0.20.8",
     "zod": "^3.22.4"
   },
