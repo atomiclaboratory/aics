@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import { genCommand } from './commands/gen';
 import { checkCommand } from './commands/check';
