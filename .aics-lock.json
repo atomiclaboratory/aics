@@ -14,10 +14,10 @@
     "src/utils/logger.ts": "6792c8d951cfd6af8cd883356886534e7b2aa680d03049e183b1a910a1cb216d",
     "src/writers/markdown.ts": "47a3eb0b1e9fa5ad008e82c2b2f545985a841b646146aeab43d5ad083b9d70ee",
     "src/cli/commands/check.ts": "58343c02cec98fffebc63da36e67b31c01ad9adb71ae60a6bfd99c7386fbcacf",
-    "src/cli/commands/gen.ts": "c919e0793001b84b4d2239e0d535335299c510410e7bfa32d8c47bb254c2ade0",
+    "src/cli/commands/gen.ts": "f9f0345490f2b7ac871db4b0b0013a35f5b888ebbc2401e63edaee7527e9fa5f",
     "src/cli/commands/init.ts": "022e58eae1a84cd8b586be3e1dffdc5b5044423c5d07075b475bfc08fa4a7b40",
     "src/cli/commands/install-hook.ts": "ba1695e9688c22b98b16c93918cf7b11bcd09d08e3c282abc02fda5b97d0fd40",
-    "src/engine/registry.ts": "e48317c1f10d2c61e92302f59db8448cbba4af2c74d7fe4c138e8c2a3225736e",
+    "src/engine/registry.ts": "79c25a06b7a8af939120edd19b56d5dd62b54faa198b040342d915164781aad3",
     "src/cli/commands/inspect.ts": "a8ace1055b013c3be22aec3742fb83080fb5969be1ba2bac8961836399c93545"
   }
 }
