@@ -1,8 +1,7 @@
-(element
-  (start_tag
-    (tag_name) @signature
-    (attribute
-      (attribute_name) @attr-name
-      (attribute_value) @attr-value) @keep-id-class)
-  (#match? @keep-id-class "id|class")
-  (children) @ignore)
+(comment) @ignore
+(element (text) @ignore)
+(element (element) @ignore)
+(script_element (raw_text) @ignore)
+(style_element (raw_text) @ignore)
+
+(start_tag (tag_name) @signature)

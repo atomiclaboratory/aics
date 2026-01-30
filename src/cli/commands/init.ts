@@ -13,12 +13,12 @@ export const initCommand = new Command('init')
     }
     
     const defaultConfig = {
-      input: ["src/**/*.ts", "src/**/*.js"],
+      input: ["**/*"],
       output: ".ai-index.md",
       budget: 32000,
       tiers: {
-        protected: ["src/core/**"],
-        skeleton: ["src/styles/**", "src/templates/**"]
+        protected: ["core/**", "src/core/**"], // Examples
+        skeleton: ["test/**", "tests/**", "**/*.test.*"]
       },
       secrets: {
         patterns: ["*KEY*", "*TOKEN*", "password", "SECRET"]

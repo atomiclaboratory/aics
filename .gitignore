@@ -31,3 +31,5 @@ assets/tree-sitter.wasm
 # Editor directories
 .vscode/
 .idea/
+
+AGENTS.md

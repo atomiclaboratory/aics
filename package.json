@@ -19,15 +19,20 @@
     "generator",
     "tree-sitter"
   ],
-  "author": "",
+  "author": "Ivan Tomic",
   "license": "ISC",
   "dependencies": {
+    "@types/cli-progress": "^3.11.6",
     "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
+    "ignore": "^7.0.5",
+    "isbinaryfile": "^5.0.7",
     "js-tiktoken": "^1.0.10",
     "minimatch": "^10.1.1",
+    "p-limit": "^7.2.0",
     "web-tree-sitter": "^0.20.8",
     "zod": "^3.22.4"
   },
