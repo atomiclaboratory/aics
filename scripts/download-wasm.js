@@ -83,4 +83,5 @@ const downloadFile = (urlString, dest) => {
     }
   }
   console.log('Asset setup complete.');
+  process.exit(0);
 })();
