@@ -1,12 +1,6 @@
 import { CallSite, Definition, InferredData } from '../types';
 import { logger } from '../utils/logger';
 
-// Helper to sanitize strings before passing them to new RegExp()
-function escapeRegExp(string: string): string {
-  // Escapes *, +, ?, (, ), etc. so they are treated as literal characters
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 export class Registry {
   private inferenceMap = new Map<string, InferredData>();
   private definitions: Definition[] = [];
@@ -43,20 +37,14 @@ export class Registry {
              const vals = Array.from(data.values).map(v => `"${v}"`).join(' | ');
              const comment = ` // @observed: ${vals}`;
              
-             // 1. Sanitize the name to prevent crashes on math operators or symbols
-             const safeName = escapeRegExp(name);
-
-             // 2. Use double backslashes (\\b) for regex boundaries
-             // incorrectly using \b matches a backspace character
-             const declRegex = new RegExp(`(function|class)\\s+${safeName}\\b[^\\n]*`, 'g');
+             // ESCAPE NAME for Regex
+             const escapedName = name.replace(/[.*+?^${}()|[\\]/g, '\\$&');
              
-             try {
-                 if (declRegex.test(newContent)) {
-                     newContent = newContent.replace(declRegex, (match) => match + comment);
-                 }
-             } catch (e) {
-                 // Gracefully skip if a name is still somehow malformed
-                 logger.warn(`Skipping inference on complex identifier: ${name.substring(0, 20)}...`);
+             // Match function/class declaration line
+             const declRegex = new RegExp(`\\b(function|class)\s+${escapedName}\\b[^\\n]*`, 'g');
+             
+             if (declRegex.test(newContent)) {
+                 newContent = newContent.replace(declRegex, (match) => match.trim() + comment);
              }
           }
       }

@@ -10,6 +10,9 @@
   body: (block) @ignore)
 
 (call
-  function: [(identifier) (attribute attribute: (identifier))] @call_name
+  function: [
+    (identifier) @call_name
+    (attribute attribute: (identifier) @call_name)
+  ]
   arguments: (argument_list [(string) (integer)] @call_arg_literal)
 ) @call_site

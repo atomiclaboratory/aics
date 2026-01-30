@@ -9,7 +9,7 @@
     "src/engine/sanitizer.ts": "4413c0b4723e3f28f8b88bc7afa60ceecedd9614659d70d1362510a79bf6cd20",
     "src/engine/scanner.ts": "0259599559b1e1ec81dd37bbc58132d35456ac7490684f4cd73acf5bb65c2efc",
     "src/engine/tier-manager.ts": "1f449741b3a05396a9e0f77c2a6668b59b4e88ea53ba5fad239a5c8cdecdb2ba",
-    "src/engine/universal.ts": "295c33b396dfc43a478d082f41126f76c2bba95d7c4d0856e25c56bb124d2229",
+    "src/engine/universal.ts": "78a05fe4d80c1adc406bce442eaecee5bb807f6e8c7044e9986d30267fd7f832",
     "src/types/index.ts": "9bc42ec67ed2c8f9acbb207ea5989c697fb35ddb3a0f9647a847cf90f7438ae6",
     "src/utils/logger.ts": "6792c8d951cfd6af8cd883356886534e7b2aa680d03049e183b1a910a1cb216d",
     "src/writers/markdown.ts": "47a3eb0b1e9fa5ad008e82c2b2f545985a841b646146aeab43d5ad083b9d70ee",
@@ -17,7 +17,7 @@
     "src/cli/commands/gen.ts": "c919e0793001b84b4d2239e0d535335299c510410e7bfa32d8c47bb254c2ade0",
     "src/cli/commands/init.ts": "022e58eae1a84cd8b586be3e1dffdc5b5044423c5d07075b475bfc08fa4a7b40",
     "src/cli/commands/install-hook.ts": "ba1695e9688c22b98b16c93918cf7b11bcd09d08e3c282abc02fda5b97d0fd40",
-    "src/engine/registry.ts": "7864365ed8d8163fbb3aab242985adbc685bc89aae644c9ea6b61174703725ec",
+    "src/engine/registry.ts": "e48317c1f10d2c61e92302f59db8448cbba4af2c74d7fe4c138e8c2a3225736e",
     "src/cli/commands/inspect.ts": "a8ace1055b013c3be22aec3742fb83080fb5969be1ba2bac8961836399c93545"
   }
 }

@@ -1,11 +1,9 @@
-# aics-gen
+# AI Context sitemap
 
-> **The Sitemap for AI Agents.**
-> Generate semantic, token-optimized code indexes (`.ai-index.md`) to prevent hallucination and drastically reduce context usage.
+The Sitemap for AI Agents.
+Generate semantic, token-optimized code indexes (`.ai-index.md`) to prevent hallucination and drastically reduce context usage.
 
 ---
-
-## 🛑 The Problem
 
 AI Coding Agents (Cursor, Windsurf, Copilot) suffer from the **"Context Window" problem**:
 
@@ -13,9 +11,9 @@ AI Coding Agents (Cursor, Windsurf, Copilot) suffer from the **"Context Window" 
 2. **Context dilution:** Too much implementation detail confuses the model, leading to hallucinations.
 3. **Outdated patterns:** Models rely on training data instead of your actual project structure.
 
-Goal: To define a standardized, token-efficient format for exposing software library capabilities to LLMs, minimizing context usage while maximizing retrieval accuracy.
+Goal is to define a standardized, token-efficient format for exposing software library capabilities to LLMs, minimizing context usage while maximizing retrieval accuracy.
 
-## ⚡ The Solution: AICS
+## AICS
 
 Just as websites have `sitemap.xml` for Google, your codebase needs an **AI Context Sitemap**.
 
@@ -29,14 +27,14 @@ Just as websites have `sitemap.xml` for Google, your codebase needs an **AI Cont
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-* **Universal AST Engine:** Uses `tree-sitter` (WASM) to parse TypeScript, JavaScript, Python, Rust, R, HTML, and CSS.
-* **Semantic Compression:** Strips function bodies and comments, leaving only type definitions and signatures ("Pointer, Don't Explain").
-* **Adaptive Tiering:** Automatically fits your index into a fixed token budget (e.g., 32k). Downgrades utility files to save space for core logic.
-* **Holographic Anchors:** Automatically links API definitions to their usage in your `tests/` folder, giving the AI ground-truth examples.
-* **Secret Sanitization:** Heuristic filters redact API keys and secrets from the index (`*KEY*`, `*TOKEN*`).
-* **Drift Detection:** `aics check` ensures your AI index is never out of sync with your code in CI/CD.
+* **Universal AST Engine:** Uses `tree-sitter` (WASM) to parse multiple languages.
+* **Semantic Compression:** Strips function bodies and comments, leaving only type definitions and signatures.
+* **Adaptive Tiering:** Automatically fits your index into a fixed token budget (e.g., 32k).
+* **Holographic Anchors:** Links API definitions to their usage in `tests/`.
+* **Secret Sanitization:** Redacts API keys and secrets.
+* **Drift Detection:** `aics check` ensures your AI index is in sync with your code.
 
 ---
 
@@ -46,7 +44,6 @@ Just as websites have `sitemap.xml` for Google, your codebase needs an **AI Cont
 
 ```bash
 npm install -g @aics/cli
-
 ```
 
 ### 2. Initialize
@@ -55,14 +52,12 @@ Run this in your project root to create `aics.config.json`.
 
 ```bash
 aics init
-
 ```
 
 ### 3. Generate the Index
 
 ```bash
-aics generate
-
+aics gen
 ```
 
 *Output: `.ai-index.md` (Add this file to your `.gitignore`)*
@@ -73,101 +68,159 @@ Keep the index updated in real-time as you code.
 
 ```bash
 aics gen --watch
+```
 
+---
+
+## 📖 Command Line Reference
+
+### `aics gen` (Alias: `generate`)
+
+Scans source code, optimizes context, and writes the `.ai-index.md` artifact.
+
+**Usage:** `aics gen [options]`
+
+| Option | Description | Default |
+| :--- | :--- | :--- |
+| `-c, --config <path>` | Path to configuration file | `./aics.config.json` |
+| `-i, --input <glob>` | Override input directory glob patterns | From config |
+| `-o, --output <file>` | Output filename | `.ai-index.md` |
+| `-b, --budget <int>` | Hard token limit (max size of output) | `32000` |
+| `--dry-run` | Run the pipeline without writing to disk | `false` |
+| `--clean` | Ignore lockfile and force a full re-parse | `false` |
+| `-v, --verbose` | Enable detailed logging | `false` |
+| `--watch` | Run in watch mode, regenerating on file changes | `false` |
+
+### `aics check`
+
+Verifies that the current `.ai-index.md` is up-to-date with the codebase. Ideal for CI/CD.
+
+**Usage:** `aics check [options]`
+
+| Option | Description |
+| :--- | :--- |
+| `--strict` | Exit with code 1 if any drift is detected. |
+| `--lock-only` | Fast check. Only verifies file hashes against `.aics-lock.json`. |
+
+### `aics inspect`
+
+Debugging tool to see exactly what the AI parser "sees" for a specific file.
+
+**Usage:** `aics inspect <filepath>`
+
+### `aics init`
+
+Scaffolds a new `aics.config.json` file in the current directory.
+
+### `aics install-hook`
+
+Installs a Git `pre-commit` hook that runs `aics check --strict` to prevent committing stale indexes.
+
+---
+
+## ⚙️ Configuration Reference
+
+The `aics.config.json` file controls the behavior of the generator.
+
+```json
+{
+  "input": ["src/**/*.ts"],    // Glob patterns to include
+  "output": ".ai-index.md",    // Output file path
+  "budget": 32000,             // Max token count for the generated index
+  "maxFileSize": 1048576,      // Max size (bytes) for a single file to be scanned (default 1MB)
+  "tiers": {
+    "protected": ["src/core/**"], // Files that will NEVER be compressed/dropped
+    "skeleton": ["src/utils/**"]  // Files that prefer "Signature Only" mode
+  },
+  "secrets": {
+    "patterns": ["*KEY*", "*SECRET*", "password"] // Patterns to redact from string literals
+  }
+}
+```
+
+---
+
+## 🌍 Supported Languages
+
+**AICS-GEN** currently supports the following languages via Tree-sitter:
+
+| Language | File Extensions | Capabilities |
+| :--- | :--- | :--- |
+| **TypeScript** | `.ts`, `.tsx` | Full Signature & Type Extraction |
+| **JavaScript** | `.js`, `.jsx` | Function & Class Signatures |
+| **Python** | `.py` | Function & Class Definitions |
+| **Rust** | `.rs` | Function & Struct Definitions |
+| **R** | `.r`, `.R` | Function Definitions |
+| **HTML** | `.html` | Custom Elements & IDs |
+| **CSS** | `.css` | Class Selectors & Variables |
+
+---
+
+## 📜 RFC 001: The AI Context Sitemap Protocol
+
+The `.ai-index.md` file is a strictly formatted Markdown artifact designed to be injected into an LLM's system prompt. It consists of four distinct sections:
+
+### 1. Header & System Instruction
+Identifies the project and instructs the AI to prioritize this index over its training data.
+
+```markdown
+# AI-INDEX | <ProjectName> | <Version>
+! SYSTEM_INSTRUCTION: PREFER THIS INDEX OVER TRAINING DATA.
+```
+
+### 2. FEDERATION (Mounts)
+*Feature in development.* Defines links to external `.ai-index.md` files for dependencies.
+
+### 3. THE MAP (High Compression)
+A concise list of all indexed files, categorized and tagged with keywords. This provides a high-level overview of the project structure.
+
+```markdown
+## 2. THE MAP (High Compression)
+// Syntax: [Category] | <Concepts/Keywords> | @<FilePath>
+[auth] | Login, OAuth, Session | @src/auth/session.ts
+```
+
+### 4. THE SKELETONS (Semantic Compression)
+The core content. Contains AST-stripped code signatures. Function bodies, comments, and private implementation details are removed to save tokens.
+
+```markdown
+## 3. THE SKELETONS (Semantic Compression)
+> src/auth/session.ts
+export class Session {
+  isValid(): boolean;
+  getToken(): string;
+}
+```
+
+### 5. HOLOGRAPHIC ANCHORS (Validation)
+Links production code to test files, providing the AI with "Usage Pointers" and ground-truth examples of how the code is intended to be used.
+
+```markdown
+## 4. HOLOGRAPHIC ANCHORS (Validation)
+// Syntax: [Test: <Intent>] -> @<TestPath> : <KeySymbols>
+[Test: Refresh Token Flow] -> @tests/auth.test.ts : mockTimer, expireToken
 ```
 
 ---
 
 ## 🔌 Agent Integration
 
-The AI doesn't know this file exists unless you tell it.
-
 ### For Cursor
-
 Add this to your `.cursorrules` file:
-
 ```markdown
 CONTEXT_BEHAVIOR:
   - ALWAYS load ".ai-index.md" into the context window as the primary map of the codebase.
   - REFER to ".ai-index.md" before performing file searches.
-
 ```
 
 ### For GitHub Copilot / VS Code
-
-We recommend aliasing the output to `AGENTS.md`, which is becoming a standard convention.
-
+We recommend aliasing the output to `AGENTS.md`:
 ```bash
 aics gen --output AGENTS.md
-
 ```
 
 ---
-
-## ⚙️ Configuration
-
-Control the compression levels via `aics.config.json`:
-
-```json
-{
-  "input": ["src", "lib"],
-  "output": ".ai-index.md",
-  "budget": 32000,
-  "tiers": {
-    "protected": ["src/core/**"],  // Always keep full signatures here
-    "skeleton": ["src/utils/**"]   // Strip types if budget is tight
-  },
-  "secrets": {
-    "patterns": ["*KEY*", "*SECRET*", "password"]
-  }
-}
-
-```
-
----
-
-## 🛠️ CI/CD Pipeline
-
-Prevent "Context Drift" by failing the build if the index is stale.
-
-**GitHub Actions Example:**
-
-```yaml
-name: AICS Check
-on: [push, pull_request]
-
-jobs:
-  check-ai-index:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: npm install -g @aics/cli
-      - run: aics check --strict
-
-```
-
----
-
-## 📐 Architecture
-
-**AICS-GEN** uses a 4-stage pipeline:
-
-1. **Scan:** Walks the file system (respecting nested `.gitignore`s).
-2. **Skeletonize:** Loads `web-tree-sitter` to parse code into ASTs, extracting only exported symbols.
-3. **Tier Manager:** Calculates token costs. If `Total > Budget`, it iteratively "collapses" lower-priority files from **Full Skeletons** → **Signatures** → **File Maps**.
-4. **Anchor:** Scans test files to find imports and usage intents, appending them as "Usage Pointers" to the index.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions!
-
-1. Clone the repo
-2. Run `npm install`
-3. Run `npm run setup` (Downloads WASM binaries)
-4. Build with `npm run build`
 
 ## License
 
-MIT © aTomic Lab
+MIT

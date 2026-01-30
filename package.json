@@ -24,6 +24,7 @@
   "dependencies": {
     "@types/cli-progress": "^3.11.6",
     "chalk": "^4.1.2",
+    "chokidar": "^5.0.0",
     "cli-progress": "^3.12.0",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
@@ -37,6 +38,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/chokidar": "^1.7.5",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.19",
     "tsup": "^8.0.2",

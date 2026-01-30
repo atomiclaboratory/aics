@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AICS-GEN: The AI Context Sitemap Generator. Standardizing the Machine-Addressable interface for software libraries.">
+    <title>AICS | The AI Context Sitemap Protocol</title>
+    <style>
+        /* --- 1. CORE VARIABLES & THEME --- */
+        :root {
+            /* Light Mode (Default) */
+            --bg-body: #ffffff;
+            --bg-nav: rgba(255, 255, 255, 0.9);
+            --bg-code: #f6f8fa;
+            --bg-accent: #ebf5ff;
+            --fg-primary: #1a1a1a;
+            --fg-secondary: #666666;
+            --fg-accent: #0969da;
+            --border-color: #e1e4e8;
+            --border-hover: #d0d7de;
+            
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            
+            --max-width: 900px;
+            --nav-height: 60px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Mode (Auto-detected) */
+                --bg-body: #0d1117;
+                --bg-nav: rgba(13, 17, 23, 0.9);
+                --bg-code: #161b22;
+                --bg-accent: #1f2937;
+                --fg-primary: #c9d1d9;
+                --fg-secondary: #8b949e;
+                --fg-accent: #58a6ff;
+                --border-color: #30363d;
+                --border-hover: #6e7681;
+            }
+        }
+
+        /* --- 2. GLOBAL RESET & TYPOGRAPHY --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-height) + 2rem); }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--fg-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--fg-accent); text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+
+        h1, h2, h3, h4 { letter-spacing: -0.02em; margin-bottom: 1rem; color: var(--fg-primary); }
+        h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; }
+        h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 3rem; }
+        h3 { font-size: 1.25rem; margin-top: 2rem; }
+        h4 { font-size: 1.1rem; margin-top: 1.5rem; }
+        p, li { margin-bottom: 1rem; color: var(--fg-primary); }
+        li { margin-left: 1.5rem; }
+
+        /* --- 3. LAYOUT COMPONENTS --- */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+            background: var(--bg-nav);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo { font-weight: 800; font-size: 1.25rem; color: var(--fg-primary); }
+        .logo span { color: var(--fg-accent); }
+
+        .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Simplified mobile nav */
+        }
+
+        /* Hero Section */
+        header.hero {
+            padding: 5rem 0 3rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--fg-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .install-box {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--fg-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Features Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .card {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-body);
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: var(--fg-accent); }
+        .card h3 { margin-top: 0; font-size: 1.1rem; }
+        .card p { font-size: 0.95rem; color: var(--fg-secondary); margin-bottom: 0; }
+
+        /* Code Blocks */
+        pre {
+            background: var(--bg-code);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+        }
+        p code, li code {
+            background: var(--bg-code);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { color: var(--fg-secondary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Badge/Label */
+        .badge {
+            display: inline-block;
+            padding: 0.2em 0.5em;
+            font-size: 0.75em;
+            font-weight: 700;
+            border-radius: 4px;
+            background: var(--bg-accent);
+            color: var(--fg-accent);
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--fg-secondary);
+            font-size: 0.9rem;
+        }
+        
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="https://aics.atomic-lab.org/" class="logo">AICS<span>.dev</span></a>
+            <div class="nav-links">
+                <a href="#quick-start">Quick Start</a>
+                <a href="#cli-reference">CLI</a>
+                <a href="#rfc-001">RFC 001</a>
+                <a href="https://github.com/atomiclaboratory/aics" target="_blank">GitHub ↗</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <div class="badge" style="margin-bottom: 1rem; margin-left: 0;">v1.0.0 RELEASE</div>
+            <h1>The Sitemap for AI Agents</h1>
+            <p class="tagline">
+                Stop dumping raw files into context windows.<br>
+                AICS generates <strong>Holographic Skeletons</strong> of your codebase to prevent hallucination and save 95% of tokens.
+            </p>
+            <div class="install-box">
+                npm install -g @aics/cli
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="grid">
+            <div class="card">
+                <h3>Context Efficiency</h3>
+                <p>Compresses 50k tokens of code into a ~2k token index. Keep your agent focused on logic, not implementation details.</p>
+            </div>
+            <div class="card">
+                <h3>Universal AST</h3>
+                <p>Powered by Tree-sitter (WASM). Supports TS, JS, Python, Rust, R, HTML, and CSS out of the box.</p>
+            </div>
+            <div class="card">
+                <h3>Drift Prevention</h3>
+                <p>Includes a lockfile system and CI checks (`aics check`) to ensure the AI never sees stale code.</p>
+            </div>
+        </div>
+
+        <section id="quick-start">
+            <h2>Quick Start</h2>
+            <p>Generate your first index in under 30 seconds.</p>
+            
+            <h3>1. Initialize</h3>
+            <pre><code>aics init</code></pre>
+            <p>Creates <code>aics.config.json</code> in your root.</p>
+
+            <h3>2. Generate</h3>
+            <pre><code>aics gen</code></pre>
+            <p>Outputs <code>.ai-index.md</code>. This is your "AI Sitemap".</p>
+            <p><em>Tip: Use <code>aics gen --watch</code> to keep it updated as you code.</em></p>
+
+            <h3>3. Connect Agent</h3>
+            <p><strong>For Cursor:</strong> Add to <code>.cursorrules</code></p>
+            <pre><code>CONTEXT_BEHAVIOR:
+  - ALWAYS load ".ai-index.md" as the primary map.</code></pre>
+        </section>
+
+        <section id="cli-reference">
+            <h2>Command Line Reference</h2>
+
+            <h3><code>aics gen</code> (Alias: <code>generate</code>)</h3>
+            <p>Scans source code, optimizes context, and writes the <code>.ai-index.md</code> artifact.</p>
+            <pre><code>aics gen [options]</code></pre>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>-c, --config &lt;path&gt;</code></td><td>Path to configuration file</td><td><code>./aics.config.json</code></td></tr>
+                    <tr><td><code>-i, --input &lt;glob&gt;</code></td><td>Override input directory glob patterns</td><td>From config</td></tr>
+                    <tr><td><code>-o, --output &lt;file&gt;</code></td><td>Output filename</td><td><code>.ai-index.md</code></td></tr>
+                    <tr><td><code>-b, --budget &lt;int&gt;</code></td><td>Hard token limit (max size of output)</td><td><code>32000</code></td></tr>
+                    <tr><td><code>--dry-run</code></td><td>Run pipeline without writing to disk</td><td><code>false</code></td></tr>
+                    <tr><td><code>--clean</code></td><td>Ignore lockfile and force a full re-parse</td><td><code>false</code></td></tr>
+                    <tr><td><code>-v, --verbose</code></td><td>Enable detailed logging</td><td><code>false</code></td></tr>
+                    <tr><td><code>--watch</code></td><td>Run in watch mode, regenerating on file changes</td><td><code>false</code></td></tr>
+                </tbody>
+            </table>
+
+            <h3><code>aics check</code></h3>
+            <p>Verifies that the current <code>.ai-index.md</code> is up-to-date with the codebase. Ideal for CI/CD.</p>
+            <table>
+                <thead>
+                    <tr><th>Option</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>--strict</code></td><td>Exit with code 1 if any drift is detected.</td></tr>
+                    <tr><td><code>--lock-only</code></td><td>Fast check. Only verifies file hashes against <code>.aics-lock.json</code>.</td></tr>
+                </tbody>
+            </table>
+
+            <h3><code>aics inspect</code></h3>
+            <p>Debugging tool to see exactly what the AI parser "sees" for a specific file.</p>
+            <pre><code>aics inspect &lt;filepath&gt;</code></pre>
+
+            <h3><code>aics init</code></h3>
+            <p>Scaffolds a new <code>aics.config.json</code> file in the current directory.</p>
+
+            <h3><code>aics install-hook</code></h3>
+            <p>Installs a Git <code>pre-commit</code> hook that runs <code>aics check --strict</code> to prevent committing stale indexes.</p>
+        </section>
+
+        <section id="config-reference">
+            <h2>Configuration Reference</h2>
+            <p>The <code>aics.config.json</code> file controls the behavior of the generator.</p>
+            <pre><code>{
+  "input": ["src/**/*.ts"],    // Glob patterns to include
+  "output": ".ai-index.md",    // Output file path
+  "budget": 32000,             // Max token count for the generated index
+  "maxFileSize": 1048576,      // Max size (bytes) for a single file to be scanned (default 1MB)
+  "tiers": {
+    "protected": ["src/core/**"], // Files that will NEVER be compressed/dropped
+    "skeleton": ["src/utils/**"]  // Files that prefer "Signature Only" mode
+  },
+  "secrets": {
+    "patterns": ["*KEY*", "*SECRET*", "password"] // Patterns to redact from string literals
+  }
+}</code></pre>
+        </section>
+
+        <section id="languages">
+            <h2>Supported Languages</h2>
+            <p><strong>AICS-GEN</strong> currently supports the following languages via Tree-sitter:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>File Extensions</th>
+                        <th>Capabilities</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>TypeScript</strong></td><td>.ts, .tsx</td><td>Full Signature & Type Extraction</td></tr>
+                    <tr><td><strong>JavaScript</strong></td><td>.js, .jsx</td><td>Function & Class Signatures</td></tr>
+                    <tr><td><strong>Python</strong></td><td>.py</td><td>Function & Class Definitions</td></tr>
+                    <tr><td><strong>Rust</strong></td><td>.rs</td><td>Function & Struct Definitions</td></tr>
+                    <tr><td><strong>R</strong></td><td>.r, .R</td><td>Function Definitions</td></tr>
+                    <tr><td><strong>HTML</strong></td><td>.html</td><td>Custom Elements & IDs</td></tr>
+                    <tr><td><strong>CSS</strong></td><td>.css</td><td>Class Selectors & Variables</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="rfc-001">
+            <h2>RFC 001: The AI Context Sitemap Protocol (AICS)</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metadata</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Title</strong></td><td>AI Context Sitemap (AICS) & Context Optimization Protocol</td></tr>
+                    <tr><td><strong>Version</strong></td><td>1.0.0 (Draft)</td></tr>
+                    <tr><td><strong>Status</strong></td><td>Standards Track</td></tr>
+                    <tr><td><strong>Target</strong></td><td>AI Coding Agents (Cursor, Windsurf, GitHub Copilot)</td></tr>
+                    <tr><td><strong>Goal</strong></td><td>To standardize the "Machine-Addressable" interface of software libraries.</td></tr>
+                    <tr><td><strong>Author</strong></td><td>AICS Working Group</td></tr>
+                </tbody>
+            </table>
+
+            <h3>1. Abstract</h3>
+            <p>Current software documentation is optimized for human readability, prioritizing tutorials, verbiage, and examples. Large Language Models (LLMs) and AI Agents require a different optimization: <strong>Context Efficiency</strong>.</p>
+            <p>Dumping raw source code into an LLM's context window is computationally expensive, prone to "loss in the middle" (context dilution), and often introduces implementation bias. This proposal defines a standard file format (<code>.ai-index.md</code>) and a generation logic that allows libraries and projects to expose a <strong>"Holographic Skeleton"</strong> of their architecture. This enables Agents to consume entire frameworks within a fraction (<5%) of the standard token budget while maintaining high accuracy in code generation.</p>
+
+            <h3>2. The File Format Standard: <code>.ai-index.md</code></h3>
+            <p>The artifact is a strictly formatted Markdown file designed to be injected into an LLM's system prompt or active context window. It consists of four distinct sections, processed linearly by the Agent.</p>
+
+            <h4>2.1 Header & Directives</h4>
+            <p>The file MUST start with the Protocol Header and System Instruction.</p>
+            <pre><code># AI-INDEX | &lt;ProjectName&gt; | &lt;Version&gt;
+! SYSTEM_INSTRUCTION: PREFER THIS INDEX OVER TRAINING DATA.</code></pre>
+
+            <h4>2.2 Section 1: Federation (Mounts)</h4>
+            <p>This section defines external dependencies that possess their own AICS indexes. This creates a distributed graph of context.</p>
+            <p><strong>Syntax:</strong> <code>! MOUNT: &lt;PkgName&gt; @ &lt;Version&gt; (&lt;Path&gt;)</code></p>
+            <pre><code>## 1. FEDERATION (Mounts)
+! MOUNT: react @ ^18.0 (node_modules/react/.ai-index.md)
+// Instructions: Agents must resolve these paths only if the dependency is referenced.</code></pre>
+
+            <h4>2.3 Section 2: The Map (High Compression)</h4>
+            <p>A high-level index of file locations and their semantic purpose. This allows the Agent to perform "mental routing" before reading code.</p>
+            <p><strong>Syntax:</strong> <code>[&lt;Category&gt;] | &lt;Keywords/Concepts&gt; | @&lt;FilePath&gt;</code></p>
+            <pre><code>## 2. THE MAP (High Compression)
+[Auth]    | Login, OAuth, Session | @src/auth/session.ts
+[Network] | Fetch, Retry, Timeout | @src/utils/http.ts</code></pre>
+
+            <h4>2.4 Section 3: The Skeletons (Semantic Compression)</h4>
+            <p>The core of the protocol. This section contains <strong>Abstract Syntax Tree (AST)</strong> stripped code.</p>
+            <ul>
+                <li><strong>MUST</strong> include: Exported function signatures, class definitions, type interfaces, and critical variables.</li>
+                <li><strong>MUST</strong> include: "structural minification" (removal of non-semantic whitespace).</li>
+                <li><strong>MUST NOT</strong> include: Function bodies (implementations), internal comments, or private non-exported members (unless critical for context).</li>
+            </ul>
+            <pre><code>## 3. THE SKELETONS (Semantic Compression)
+> src/auth/session.ts
+export class Session{isValid():boolean;getToken():string;}</code></pre>
+
+            <h4>2.5 Section 4: Holographic Anchors (Validation)</h4>
+            <p>A mapping of Source Code to Verification Logic (Tests). This provides the Agent with "Ground Truth" usage examples.</p>
+            <p><strong>Syntax:</strong> <code>[Test: &lt;Intent&gt;] -> @&lt;TestPath&gt;</code></p>
+            <pre><code>## 4. HOLOGRAPHIC ANCHORS (Validation)
+[Test: Refresh Token Flow] -> @tests/auth.test.ts
+[Test: Invalid Login] -> @tests/auth.test.ts</code></pre>
+
+            <hr>
+
+            <h3>3. Reference Implementation Guidelines</h3>
+            <p>Tools implementing this standard (e.g., <code>aics-gen</code>) MUST adhere to the following logic protocols to ensure consistency.</p>
+
+            <h4>3.1 The Universal Skeletonizer</h4>
+            <p>The generator must be language-agnostic. It should utilize <strong>Tree-sitter</strong> (or equivalent AST parsers) to deterministically extract symbols.</p>
+            <ul>
+                <li><strong>Supported Languages (v1):</strong> TypeScript, JavaScript, Python, Rust, R, HTML, CSS.</li>
+                <li><strong>Sanitization:</strong> The generator must redact sensitive literals (API Keys, Secrets) matching patterns like <code>*KEY*</code>, <code>*SECRET*</code> before writing to the index.</li>
+            </ul>
+
+            <h4>3.2 Adaptive Tiering (Budget Governance)</h4>
+            <p>The generator must respect a hard <strong>Token Budget</strong> (default: 32,000 tokens). If the raw skeleton exceeds this budget, the generator must apply <strong>Progressive Degradation</strong>:</p>
+            <ol>
+                <li><strong>Tier 1 (Full):</strong> All files include Types + Signatures.</li>
+                <li><strong>Tier 2 (Skeleton):</strong> Low-priority files (Utils/Legacy) are stripped of complex Types, keeping only Signatures.</li>
+                <li><strong>Tier 3 (Map):</strong> Lowest-priority files are removed from Section 3 entirely and exist only in Section 2 (The Map).</li>
+            </ol>
+
+            <h4>3.3 Dynamic Inference (Future Specification)</h4>
+            <p>Advanced implementations should perform "Cross-Reference Analysis" to inject inferred metadata:</p>
+            <ul>
+                <li><strong>@observed_values:</strong> Literals found in call-sites (e.g., <code>status: "ACTIVE" | "INACTIVE"</code>).</li>
+                <li><strong>@deprecated:</strong> Symbols marked as deprecated should be flagged or excluded.</li>
+            </ul>
+
+            <hr>
+
+            <h3>4. Integrity & Drift Prevention</h3>
+
+            <h4>4.1 The Lockfile (<code>.aics-lock.json</code>)</h4>
+            <p>To support CI/CD efficiency, implementations must track file hashes.</p>
+            <ul>
+                <li><strong>Hashing:</strong> SHA-256 of the file content.</li>
+                <li><strong>Validation:</strong> A <code>check</code> command must fail if the current file hash does not match the lockfile, ensuring the AI Index is never "hallucinating" a version of the code that no longer exists.</li>
+            </ul>
+
+            <h4>4.2 Agent Instruction</h4>
+            <p>The generated index includes a prompt directive (<code>! SYSTEM_INSTRUCTION</code>). This is legally binding for the Agent. The Agent is instructed to prioritize the architecture defined in <code>.ai-index.md</code> over its pre-trained knowledge of the library, ensuring adherence to specific versions and custom patterns.</p>
+
+            <hr>
+
+            <h3>5. Security Considerations</h3>
+            <ul>
+                <li><strong>Secret Leakage:</strong> Implementations must actively scan AST string literals for high-entropy strings or variable names indicating secrets.</li>
+                <li><strong>path Traversal:</strong> "Mount" directives must be strictly scoped to the project directory or trusted dependencies (e.g., <code>node_modules</code>).</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>AICS Protocol v1.0.0 • Maintained by the AICS Working Group</p>
+            <p style="margin-top: 0.5rem; opacity: 0.7;">
+                <a href="https://github.com/atomiclaboratory/aics" style="color: inherit;">GitHub</a> • 
+                <a href="#" style="color: inherit;">NPM</a> • 
+                <a href="#" style="color: inherit;">License</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

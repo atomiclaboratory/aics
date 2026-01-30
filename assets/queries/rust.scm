@@ -10,6 +10,9 @@
   body: (declaration_list) @ignore)
 
 (call_expression
-  function: [(identifier) (field_expression field: (field_identifier))] @call_name
+  function: [
+    (identifier) @call_name
+    (field_expression field: (field_identifier) @call_name)
+  ]
   arguments: (arguments [(string_literal) (integer_literal)] @call_arg_literal)
 ) @call_site
