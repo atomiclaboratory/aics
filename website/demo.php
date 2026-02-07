@@ -103,15 +103,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($clone_ret !== 0) {
                             $error = "Clone Failed (or Timed Out): " . implode("\n", $clone_output);
                         } else {
-                            // RUN AICS (Timeout 60s)
-                            $outputFile = $workDir . "/.ai-index.md";
-                            $cmd_aics = "timeout 60s $AICS_BIN gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($outputFile) . " 2>&1";
-                            
-                            exec($cmd_aics, $aics_output, $aics_ret);
+                        // RUN AICS (Timeout 60s)
+                        $outputFile = $workDir . "/.ai-index.md";
+                        $cmd_aics = "timeout 60s $AICS_BIN gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($outputFile) . " 2>&1";
+                        
+                        exec($cmd_aics, $aics_output, $aics_ret);
 
-                            if ($aics_ret !== 0) {
-                                $error = "AICS Generation Failed:\n" . implode("\n", $aics_output);
-                            } elseif (file_exists($outputFile)) {
+                        if ($aics_ret !== 0) {
+                            $debugInfo = "\n--- DEBUG INFO ---\n";
+                            $debugInfo .= "CMD: $cmd_aics\n";
+                            $debugInfo .= "BIN TARGET: $target\n";
+                            $debugInfo .= "LOCAL BIN EXISTS: " . ($localBin && file_exists($localBin) ? "YES ($localBin)" : "NO") . "\n";
+                            $debugInfo .= "DIST BIN EXISTS: " . ($distBin && file_exists($distBin) ? "YES ($distBin)" : "NO") . "\n";
+                            $debugInfo .= "CWD: " . getcwd() . "\n";
+                            $debugInfo .= "PHP USER: " . get_current_user() . "\n";
+                            
+                            $error = "AICS Generation Failed:\n" . implode("\n", $aics_output) . $debugInfo;
+                        } elseif (file_exists($outputFile)) {
                                 $output = file_get_contents($outputFile);
                             } else {
                                 $error = "Unknown Error: Output file not created.";
