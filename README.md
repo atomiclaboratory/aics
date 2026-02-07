@@ -43,7 +43,7 @@ Just as websites have `sitemap.xml` for Google, your codebase needs an **AI Cont
 ### 1. Install
 
 ```bash
-npm install -g @aics/cli
+npm install -g aics-gen
 ```
 
 ### 2. Initialize

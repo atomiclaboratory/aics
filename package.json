@@ -36,7 +36,7 @@
     "agent",
     "documentation"
   ],
-  "author": "Ivan Tomic - aTomic Lab <atomic.research.lab@gmail.com>",
+  "author": "aTomic Lab <atomic.research.lab@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@types/cli-progress": "^3.11.6",
