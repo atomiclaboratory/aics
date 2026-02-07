@@ -27,71 +27,82 @@ $output = "";
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $repoUrl = trim($_POST['repo_url']);
-
-    // 1. SECURITY: Validate URL strictly
-    if (!preg_match('/^https:\/\/github\.com\/([a-zA-Z0-9-_\.]+)\/([a-zA-Z0-9-_\.]+)$/', $repoUrl, $matches)) {
-        $error = "INVALID URL. Must be https://github.com/user/repo";
+    // 0. PRE-FLIGHT CHECK
+    if (!function_exists('exec')) {
+        $error = "SERVER CONFIG ERROR: 'exec()' is disabled on this server. Please enable it in Cloudways PHP Settings (remove from disable_functions).";
     } else {
-        $user = $matches[1];
-        $repo = $matches[2];
-        $api_url = "https://api.github.com/repos/$user/$repo";
+        $repoUrl = trim($_POST['repo_url']);
+        $user = null;
+        $repo = null;
 
-        // 2. CHECK SIZE via API
-        $opts = [
-            'http' => [
-                'method' => 'GET',
-                'header' => [
-                    'User-Agent: AICS-Demo-Tool'
-                ]
-            ]
-        ];
-        $context = stream_context_create($opts);
-        $repoDataJson = @file_get_contents($api_url, false, $context);
-        
-        if ($repoDataJson === false) {
-            $error = "Failed to fetch repo info. Is it public?";
+        // PARSE URL (HTTPS or SSH)
+        if (preg_match('/^https:\/\/github\.com\/([a-zA-Z0-9-_\.]+)\/([a-zA-Z0-9-_\.]+?)(\.git)?$/', $repoUrl, $matches)) {
+            $user = $matches[1];
+            $repo = $matches[2];
+        } elseif (preg_match('/^git@github\.com:([a-zA-Z0-9-_\.]+)\/([a-zA-Z0-9-_\.]+?)(\.git)?$/', $repoUrl, $matches)) {
+            $user = $matches[1];
+            $repo = $matches[2];
+        }
+
+        if (!$user || !$repo) {
+            $error = "INVALID URL. Supported formats:\n- https://github.com/user/repo\n- https://github.com/user/repo.git\n- git@github.com:user/repo.git";
         } else {
-            $repoData = json_decode($repoDataJson, true);
-            $sizeKB = $repoData['size'];
+            // FORCE HTTPS for API and Clone (Server likely has no SSH keys)
+            $api_url = "https://api.github.com/repos/$user/$repo";
+            $clone_url = "https://github.com/$user/$repo.git";
 
-            if ($sizeKB > $MAX_REPO_SIZE_KB) {
-                $error = "REPO TOO LARGE. Size: " . formatSize($sizeKB) . ". Limit: 5MB.";
+            // 2. CHECK SIZE via API
+            $opts = [
+                'http' => [
+                    'method' => 'GET',
+                    'header' => [
+                        'User-Agent: AICS-Demo-Tool'
+                    ]
+                ]
+            ];
+            $context = stream_context_create($opts);
+            $repoDataJson = @file_get_contents($api_url, false, $context);
+            
+            if ($repoDataJson === false) {
+                $error = "Failed to fetch repo info. Is it public?";
             } else {
-                // 3. PROCESS
-                $sessionID = uniqid('aics_', true);
-                $workDir = $TEMP_DIR . '/' . $sessionID;
-                
-                if (!mkdir($workDir, 0777, true)) {
-                    $error = "Server Error: Cannot create temp dir.";
+                $repoData = json_decode($repoDataJson, true);
+                $sizeKB = $repoData['size'];
+
+                if ($sizeKB > $MAX_REPO_SIZE_KB) {
+                    $error = "REPO TOO LARGE. Size: " . formatSize($sizeKB) . ". Limit: 5MB.";
                 } else {
-                    // CLONE (Timeout 45s)
-                    $cmd_clone = "timeout 45s git clone --depth 1 " . escapeshellarg($repoUrl) . " " . escapeshellarg($workDir) . " 2>&1";
-                    exec($cmd_clone, $clone_output, $clone_ret);
-
-                    if ($clone_ret !== 0) {
-                        $error = "Clone Failed (or Timed Out): " . implode("\n", $clone_output);
+                    // 3. PROCESS
+                    $sessionID = uniqid('aics_', true);
+                    $workDir = $TEMP_DIR . '/' . $sessionID;
+                    
+                    if (!mkdir($workDir, 0777, true)) {
+                        $error = "Server Error: Cannot create temp dir.";
                     } else {
-                        // RUN AICS (Timeout 60s)
-                        // Note: We need to ensure 'aics' is found. If relying on local dist:
-                        // $cmd_aics = "node " . __DIR__ . "/../dist/index.js gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($workDir . "/.ai-index.md");
-                        
-                        // Assuming global install for now, or use the alias if configured
-                        $outputFile = $workDir . "/.ai-index.md";
-                        $cmd_aics = "timeout 60s $AICS_BIN gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($outputFile) . " 2>&1";
-                        
-                        exec($cmd_aics, $aics_output, $aics_ret);
+                        // CLONE (Timeout 45s) - Use forced HTTPS URL
+                        $cmd_clone = "timeout 45s git clone --depth 1 " . escapeshellarg($clone_url) . " " . escapeshellarg($workDir) . " 2>&1";
+                        exec($cmd_clone, $clone_output, $clone_ret);
 
-                        if ($aics_ret !== 0) {
-                            $error = "AICS Generation Failed:\n" . implode("\n", $aics_output);
-                        } elseif (file_exists($outputFile)) {
-                            $output = file_get_contents($outputFile);
+                        if ($clone_ret !== 0) {
+                            $error = "Clone Failed (or Timed Out): " . implode("\n", $clone_output);
                         } else {
-                            $error = "Unknown Error: Output file not created.";
+                            // RUN AICS (Timeout 60s)
+                            $outputFile = $workDir . "/.ai-index.md";
+                            $cmd_aics = "timeout 60s $AICS_BIN gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($outputFile) . " 2>&1";
+                            
+                            exec($cmd_aics, $aics_output, $aics_ret);
+
+                            if ($aics_ret !== 0) {
+                                $error = "AICS Generation Failed:\n" . implode("\n", $aics_output);
+                            } elseif (file_exists($outputFile)) {
+                                $output = file_get_contents($outputFile);
+                            } else {
+                                $error = "Unknown Error: Output file not created.";
+                            }
                         }
+                        // 4. CLEANUP
+                        cleanUp($workDir);
                     }
-                    // 4. CLEANUP
-                    cleanUp($workDir);
                 }
             }
         }
@@ -129,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST">
         <p>ENTER TARGET COORDINATES (GitHub URL):</p>
         <div style="display: flex; gap: 10px;">
-            <input type="text" name="repo_url" placeholder="https://github.com/username/repo" required value="<?php echo isset($_POST['repo_url']) ? htmlspecialchars($_POST['repo_url']) : ''; ?>">
+            <input type="text" name="repo_url" placeholder="https://github.com/user/repo OR git@github.com:user/repo.git" required value="<?php echo isset($_POST['repo_url']) ? htmlspecialchars($_POST['repo_url']) : ''; ?>">
             <button type="submit">EXECUTE >></button>
         </div>
         <p style="font-size: 0.8em; color: #666;">LIMIT: 5MB REPO SIZE. PROTOCOL: DEEP SCAN.</p>
