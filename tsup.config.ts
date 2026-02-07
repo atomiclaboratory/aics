@@ -10,7 +10,7 @@ export default defineConfig({
   sourcemap: true,
   minify: false,
   target: 'node18',
-  // Bundle ALL dependencies to avoid ESM/CJS conflicts (like p-limit v5)
-  // and make the dist independent of node_modules on the server.
-  noExternal: [/(.*)/],
+  // Bundle ALL dependencies EXCEPT pdf-parse to avoid DOMMatrix/Browser errors.
+  // pdf-parse must be installed in node_modules on the server.
+  noExternal: [/^(?!pdf-parse).*$/],
 });
