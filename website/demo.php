@@ -3,20 +3,26 @@
 $MAX_REPO_SIZE_KB = 5120; // 5MB
 
 // DETECT BINARY LOCATION
-// Priority 1: Local node_modules (if installed as dependency)
-$localBin = realpath(__DIR__ . '/../node_modules/.bin/aics');
-// Priority 2: Dist folder (if running from source repo)
-$distBin = realpath(__DIR__ . '/../dist/index.js');
+// 1. Repo Dist (Preferred for source deploy)
+$p1_dist = __DIR__ . '/../dist/index.js';
+// 2. Repo Bin (Wrapper)
+$p2_bin  = __DIR__ . '/../bin/aics.js';
+// 3. Local Dependency (If installed in node_modules)
+$p3_dep  = __DIR__ . '/../node_modules/aics-gen/dist/index.js';
+// 4. Local Bin Link
+$p4_link = __DIR__ . '/../node_modules/.bin/aics';
 
-if ($localBin && file_exists($localBin)) {
-    $target = $localBin;
-} elseif ($distBin && file_exists($distBin)) {
-    $target = $distBin;
-} else {
-    $target = 'aics'; // Hope it's global
-}
+$target = null;
+if (file_exists($p1_dist)) $target = $p1_dist;
+elseif (file_exists($p2_bin)) $target = $p2_bin;
+elseif (file_exists($p3_dep)) $target = $p3_dep;
+elseif (file_exists($p4_link)) $target = $p4_link;
 
-// We wrap in 'node' to be safe against PATH issues with shebangs
+// Fallback to global
+if (!$target) $target = 'aics';
+else $target = realpath($target); // Resolve to absolute for safety
+
+// Wrap in node if it's a file path
 $AICS_BIN = ($target === 'aics') ? 'aics' : 'node ' . escapeshellarg($target);
 
 $TEMP_DIR = sys_get_temp_dir() . '/aics_demos';
@@ -113,9 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $debugInfo = "\n--- DEBUG INFO ---\n";
                             $debugInfo .= "CMD: $cmd_aics\n";
                             $debugInfo .= "BIN TARGET: $target\n";
-                            $debugInfo .= "LOCAL BIN EXISTS: " . ($localBin && file_exists($localBin) ? "YES ($localBin)" : "NO") . "\n";
-                            $debugInfo .= "DIST BIN EXISTS: " . ($distBin && file_exists($distBin) ? "YES ($distBin)" : "NO") . "\n";
+                            $debugInfo .= "CHECKED PATHS:\n";
+                            $debugInfo .= "1. Dist: $p1_dist (" . (file_exists($p1_dist) ? "FOUND" : "MISSING") . ")\n";
+                            $debugInfo .= "2. Bin: $p2_bin (" . (file_exists($p2_bin) ? "FOUND" : "MISSING") . ")\n";
+                            $debugInfo .= "3. Dep: $p3_dep (" . (file_exists($p3_dep) ? "FOUND" : "MISSING") . ")\n";
+                            $debugInfo .= "4. Link: $p4_link (" . (file_exists($p4_link) ? "FOUND" : "MISSING") . ")\n";
                             $debugInfo .= "CWD: " . getcwd() . "\n";
+                            $debugInfo .= "DIR: " . __DIR__ . "\n";
                             $debugInfo .= "PHP USER: " . get_current_user() . "\n";
                             
                             $error = "AICS Generation Failed:\n" . implode("\n", $aics_output) . $debugInfo;
