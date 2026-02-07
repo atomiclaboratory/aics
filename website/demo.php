@@ -1,9 +1,24 @@
 <?php
 // CONFIGURATION
 $MAX_REPO_SIZE_KB = 5120; // 5MB
-// Use local 'dist/index.js' via 'node' to avoid global install issues
-// This assumes 'node' is in the server's $PATH.
-$AICS_BIN = 'node ' . escapeshellarg(realpath(__DIR__ . '/../dist/index.js')); 
+
+// DETECT BINARY LOCATION
+// Priority 1: Local node_modules (if installed as dependency)
+$localBin = realpath(__DIR__ . '/../node_modules/.bin/aics');
+// Priority 2: Dist folder (if running from source repo)
+$distBin = realpath(__DIR__ . '/../dist/index.js');
+
+if ($localBin && file_exists($localBin)) {
+    $target = $localBin;
+} elseif ($distBin && file_exists($distBin)) {
+    $target = $distBin;
+} else {
+    $target = 'aics'; // Hope it's global
+}
+
+// We wrap in 'node' to be safe against PATH issues with shebangs
+$AICS_BIN = ($target === 'aics') ? 'aics' : 'node ' . escapeshellarg($target);
+
 $TEMP_DIR = sys_get_temp_dir() . '/aics_demos';
 
 // UTILS
