@@ -124,33 +124,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($clone_ret !== 0) {
                             $error = "Clone Failed (or Timed Out): " . implode("\n", $clone_output);
                         } else {
-                        // RUN AICS (Timeout 60s)
-                        $outputFile = $workDir . "/.ai-index.md";
-                        $cmd_aics = "timeout 60s $AICS_BIN gen -i " . escapeshellarg($workDir) . " -o " . escapeshellarg($outputFile) . " 2>&1";
-                        
-                        exec($cmd_aics, $aics_output, $aics_ret);
-
-                        if ($aics_ret !== 0) {
-                            $debugInfo = "\n--- DEBUG INFO ---\n";
-                            $debugInfo .= "CMD: $cmd_aics\n";
-                            $debugInfo .= "BIN TARGET: $target\n";
-                            $debugInfo .= "CHECKED PATHS:\n";
-                            $debugInfo .= "1. Dist: $p1_dist (" . (file_exists($p1_dist) ? "FOUND" : "MISSING") . ")\n";
-                            $debugInfo .= "2. Bin: $p2_bin (" . (file_exists($p2_bin) ? "FOUND" : "MISSING") . ")\n";
-                            $debugInfo .= "3. Dep: $p3_dep (" . (file_exists($p3_dep) ? "FOUND" : "MISSING") . ")\n";
-                            $debugInfo .= "4. Link: $p4_link (" . (file_exists($p4_link) ? "FOUND" : "MISSING") . ")\n";
-                            $debugInfo .= "5. Web: $p5_web (" . (file_exists($p5_web) ? "FOUND" : "MISSING") . ")\n";
-                            $debugInfo .= "CWD: " . getcwd() . "\n";
-                            $debugInfo .= "DIR: " . __DIR__ . "\n";
-                            $debugInfo .= "PHP USER: " . get_current_user() . "\n";
+                            // RUN AICS (Timeout 60s)
+                            // We CD into the workdir so AICS picks up any local aics.config.json
+                            // and relative paths in the output look correct (e.g. "src/main.ts")
+                            $outputFile = ".ai-index.md"; // Relative to workDir
+                            $cmd_aics = "cd " . escapeshellarg($workDir) . " && timeout 60s $AICS_BIN gen -o " . escapeshellarg($outputFile) . " 2>&1";
                             
-                            $msg = "AICS Generation Failed:\n" . implode("\n", $aics_output);
-                            if (!file_exists($p1_dist) && !file_exists($p3_dep) && $target === 'aics') {
-                                $msg .= "\n\n[HINT] 'dist/index.js' is MISSING. Did you run `npm run build` locally and upload the 'dist' folder?";
-                            }
-                            $error = $msg . $debugInfo;
-                        } elseif (file_exists($outputFile)) {
-                                $output = file_get_contents($outputFile);
+                            exec($cmd_aics, $aics_output, $aics_ret);
+
+                            $absOutputFile = $workDir . "/" . $outputFile;
+
+                            if ($aics_ret !== 0) {
+                                $debugInfo = "\n--- DEBUG INFO ---\n";
+                                $debugInfo .= "CMD: $cmd_aics\n";
+                                $debugInfo .= "BIN TARGET: $target\n";
+                                $debugInfo .= "CHECKED PATHS:\n";
+                                $debugInfo .= "1. Dist: $p1_dist (" . (file_exists($p1_dist) ? "FOUND" : "MISSING") . ")\n";
+                                $debugInfo .= "2. Bin: $p2_bin (" . (file_exists($p2_bin) ? "FOUND" : "MISSING") . ")\n";
+                                $debugInfo .= "3. Dep: $p3_dep (" . (file_exists($p3_dep) ? "FOUND" : "MISSING") . ")\n";
+                                $debugInfo .= "4. Link: $p4_link (" . (file_exists($p4_link) ? "FOUND" : "MISSING") . ")\n";
+                                $debugInfo .= "5. Web: $p5_web (" . (file_exists($p5_web) ? "FOUND" : "MISSING") . ")\n";
+                                $debugInfo .= "CWD: " . getcwd() . "\n";
+                                $debugInfo .= "DIR: " . __DIR__ . "\n";
+                                $debugInfo .= "PHP USER: " . get_current_user() . "\n";
+                                
+                                $msg = "AICS Generation Failed:\n" . implode("\n", $aics_output);
+                                if (!file_exists($p1_dist) && !file_exists($p3_dep) && $target === 'aics') {
+                                    $msg .= "\n\n[HINT] 'dist/index.js' is MISSING. Did you run `npm run build` locally and upload the 'dist' folder?";
+                                }
+                                $error = $msg . $debugInfo;
+                            } elseif (file_exists($absOutputFile)) {
+                                $output = file_get_contents($absOutputFile);
                             } else {
                                 $error = "Unknown Error: Output file not created.";
                             }
