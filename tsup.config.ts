@@ -10,4 +10,7 @@ export default defineConfig({
   sourcemap: true,
   minify: false,
   target: 'node18',
+  // Bundle ALL dependencies to avoid ESM/CJS conflicts (like p-limit v5)
+  // and make the dist independent of node_modules on the server.
+  noExternal: [/(.*)/],
 });

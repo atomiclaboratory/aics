@@ -5,22 +5,37 @@ $MAX_REPO_SIZE_KB = 5120; // 5MB
 // DETECT BINARY LOCATION
 // 1. Repo Dist (Preferred for source deploy)
 $p1_dist = __DIR__ . '/../dist/index.js';
-// 2. Repo Bin (Wrapper)
+// 2. Repo Bin (Wrapper) - Only use if dist exists!
 $p2_bin  = __DIR__ . '/../bin/aics.js';
-// 3. Local Dependency (If installed in node_modules)
+// 3. Local Dependency (Root node_modules)
 $p3_dep  = __DIR__ . '/../node_modules/aics-gen/dist/index.js';
-// 4. Local Bin Link
+// 4. Local Bin Link (Root node_modules)
 $p4_link = __DIR__ . '/../node_modules/.bin/aics';
+// 5. Website Dependency (Website node_modules)
+$p5_web  = __DIR__ . '/node_modules/aics-gen/dist/index.js';
 
 $target = null;
-if (file_exists($p1_dist)) $target = $p1_dist;
-elseif (file_exists($p2_bin)) $target = $p2_bin;
-elseif (file_exists($p3_dep)) $target = $p3_dep;
-elseif (file_exists($p4_link)) $target = $p4_link;
+if (file_exists($p1_dist)) {
+    $target = $p1_dist;
+} elseif (file_exists($p3_dep)) {
+    $target = $p3_dep;
+} elseif (file_exists($p5_web)) {
+    $target = $p5_web;
+} elseif (file_exists($p4_link)) {
+    $target = $p4_link; // Symlinks might point anywhere, risky but try
+} elseif (file_exists($p2_bin) && file_exists($p1_dist)) {
+    // Only use bin/aics.js if dist exists, otherwise it crashes
+    $target = $p2_bin;
+}
 
-// Fallback to global
-if (!$target) $target = 'aics';
-else $target = realpath($target); // Resolve to absolute for safety
+// Fallback to global if nothing found
+if (!$target) {
+    // Check if npx is available? 
+    // Let's just try 'aics' global
+    $target = 'aics';
+} else {
+    $target = realpath($target);
+}
 
 // Wrap in node if it's a file path
 $AICS_BIN = ($target === 'aics') ? 'aics' : 'node ' . escapeshellarg($target);
@@ -124,11 +139,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $debugInfo .= "2. Bin: $p2_bin (" . (file_exists($p2_bin) ? "FOUND" : "MISSING") . ")\n";
                             $debugInfo .= "3. Dep: $p3_dep (" . (file_exists($p3_dep) ? "FOUND" : "MISSING") . ")\n";
                             $debugInfo .= "4. Link: $p4_link (" . (file_exists($p4_link) ? "FOUND" : "MISSING") . ")\n";
+                            $debugInfo .= "5. Web: $p5_web (" . (file_exists($p5_web) ? "FOUND" : "MISSING") . ")\n";
                             $debugInfo .= "CWD: " . getcwd() . "\n";
                             $debugInfo .= "DIR: " . __DIR__ . "\n";
                             $debugInfo .= "PHP USER: " . get_current_user() . "\n";
                             
-                            $error = "AICS Generation Failed:\n" . implode("\n", $aics_output) . $debugInfo;
+                            $msg = "AICS Generation Failed:\n" . implode("\n", $aics_output);
+                            if (!file_exists($p1_dist) && !file_exists($p3_dep) && $target === 'aics') {
+                                $msg .= "\n\n[HINT] 'dist/index.js' is MISSING. Did you run `npm run build` locally and upload the 'dist' folder?";
+                            }
+                            $error = $msg . $debugInfo;
                         } elseif (file_exists($outputFile)) {
                                 $output = file_get_contents($outputFile);
                             } else {
