@@ -1,7 +1,9 @@
 <?php
 // CONFIGURATION
 $MAX_REPO_SIZE_KB = 5120; // 5MB
-$AICS_BIN = 'aics'; // Assuming installed globally. If local: 'node ../dist/index.js'
+// Use local 'dist/index.js' via 'node' to avoid global install issues
+// This assumes 'node' is in the server's $PATH.
+$AICS_BIN = 'node ' . escapeshellarg(realpath(__DIR__ . '/../dist/index.js')); 
 $TEMP_DIR = sys_get_temp_dir() . '/aics_demos';
 
 // UTILS
