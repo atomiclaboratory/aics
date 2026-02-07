@@ -14,6 +14,8 @@ import { logger } from '../utils/logger';
 import { SingleBar, Presets } from 'cli-progress';
 import pLimit from 'p-limit';
 import { isBinaryFile } from 'isbinaryfile';
+import { processDocs } from '../engine/docs/pipeline';
+import { LLMConfig } from '../engine/llm/client';
 
 export async function runPipeline(options: { 
   configPath?: string, 
@@ -133,6 +135,24 @@ export async function runPipeline(options: {
 
     optimizeTiers(files, config);
 
+    // Pass 3: Documentation Processing & Summarization (New)
+    logger.info('Processing documentation files...');
+    let llmConfig: LLMConfig | undefined;
+    
+    // Check config first, then env vars
+    if (config.llm) {
+        llmConfig = config.llm;
+    } else if (process.env.OPENAI_API_KEY) {
+        llmConfig = { provider: 'openai', apiKey: process.env.OPENAI_API_KEY };
+    } else if (process.env.GEMINI_API_KEY) {
+        llmConfig = { provider: 'gemini', apiKey: process.env.GEMINI_API_KEY };
+    }
+
+    const docs = await processDocs(config.input, cache, llmConfig);
+    if (docs.length > 0) {
+        logger.info(`Processed ${docs.length} documentation files.`);
+    }
+
     // Get package name from package.json if possible
     let projectName = 'Project';
     try {
@@ -140,7 +160,7 @@ export async function runPipeline(options: {
         projectName = pkg.name;
     } catch (e) {}
 
-    const output = generateMarkdown(projectName, '1.0.0', files, anchors);
+    const output = generateMarkdown(projectName, '1.0.0', files, anchors, docs);
 
     if (options.dryRun) {
         logger.info('Dry run complete. Output preview (first 500 chars):');

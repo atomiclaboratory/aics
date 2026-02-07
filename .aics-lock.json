@@ -1,23 +1,35 @@
 {
   "version": "1.0",
   "files": {
-    "src/cli/index.ts": "cae90480c238136c68867cb3c6c2a8776b2c7c42e6fb62bc307c4670871615c3",
-    "src/core/cache.ts": "d84c160decd2a2cf4b7374b8ccf46d5d25d4d7621a3f6847ba7888aea7cad3ee",
+    "src/cli/index.ts": "7f4abccf0daac3f530088762f11dc9fac3502af30e724cd400dba562ebfb7151",
+    "src/core/cache.ts": "0854a77da3356d92a02d03a44df2aa9c631d1dd2e73147ad76e5bb0d1c9ac9aa",
     "src/core/config.ts": "a86df3dd978982b22de5a92032d50b41466a67bfbf79e0e103e25a8a575cc62c",
-    "src/core/pipeline.ts": "3b739ab8ba7f67621dc71741127d32e77c3c2606a0987941f49bbd7254730f77",
+    "src/core/pipeline.ts": "7c284f3230d933f02a4b1d2c363267b1dce4e497339b10258993982fe9502c66",
     "src/engine/anchors.ts": "807c28c8e43e7dae721d783f32ce5f463c794bf48072d1534a70a473ea474937",
     "src/engine/sanitizer.ts": "4413c0b4723e3f28f8b88bc7afa60ceecedd9614659d70d1362510a79bf6cd20",
-    "src/engine/scanner.ts": "0259599559b1e1ec81dd37bbc58132d35456ac7490684f4cd73acf5bb65c2efc",
+    "src/engine/scanner.ts": "5df30941ff5612a54bf41a836fea3f1e8480e1624f6df7d7cd7fd1e5f148a6ac",
     "src/engine/tier-manager.ts": "1f449741b3a05396a9e0f77c2a6668b59b4e88ea53ba5fad239a5c8cdecdb2ba",
     "src/engine/universal.ts": "78a05fe4d80c1adc406bce442eaecee5bb807f6e8c7044e9986d30267fd7f832",
-    "src/types/index.ts": "9bc42ec67ed2c8f9acbb207ea5989c697fb35ddb3a0f9647a847cf90f7438ae6",
+    "src/types/index.ts": "ef78a21f86e46bb5227480e701503e5deb0e294e01a8013b923c9039cce976c0",
     "src/utils/logger.ts": "6792c8d951cfd6af8cd883356886534e7b2aa680d03049e183b1a910a1cb216d",
-    "src/writers/markdown.ts": "47a3eb0b1e9fa5ad008e82c2b2f545985a841b646146aeab43d5ad083b9d70ee",
+    "src/writers/markdown.ts": "7048998814b45a7d76a26b3477a6ced2f9983639ecaf4dc63952e7ec338f2429",
     "src/cli/commands/check.ts": "58343c02cec98fffebc63da36e67b31c01ad9adb71ae60a6bfd99c7386fbcacf",
     "src/cli/commands/gen.ts": "f9f0345490f2b7ac871db4b0b0013a35f5b888ebbc2401e63edaee7527e9fa5f",
     "src/cli/commands/init.ts": "022e58eae1a84cd8b586be3e1dffdc5b5044423c5d07075b475bfc08fa4a7b40",
     "src/cli/commands/install-hook.ts": "ba1695e9688c22b98b16c93918cf7b11bcd09d08e3c282abc02fda5b97d0fd40",
     "src/engine/registry.ts": "79c25a06b7a8af939120edd19b56d5dd62b54faa198b040342d915164781aad3",
-    "src/cli/commands/inspect.ts": "a8ace1055b013c3be22aec3742fb83080fb5969be1ba2bac8961836399c93545"
-  }
+    "src/cli/commands/inspect.ts": "a8ace1055b013c3be22aec3742fb83080fb5969be1ba2bac8961836399c93545",
+    "src/core/bio-pipeline.ts": "02247104111f642c20335de28a821e9cf5e1d08b58669a2921d30f192247effe",
+    "src/writers/bio-markdown.ts": "93ac22929f7085cf2f3424b47d22f86c3e4298914663525f137fb309bdf4c56a",
+    "src/cli/commands/bio.ts": "28734eaedc0f81a41ca66458949f4e3efa64f4c9324d22a962ec2fe285ca4572",
+    "src/engine/bio/manifest.ts": "7329ccb4b776fdf06911ef10b1fef674ccac7649b2bfdab254accda5efff3fcc",
+    "src/engine/docs/parsers.ts": "8bd4ef77111e73fccce99cad8f99524894b394ea49f9665fa11bf87b72da1346",
+    "src/engine/docs/scanner.ts": "d362f8d80d2ce9f4f7bb13391ebf7d7654acb5ebdb56c0a1e6092aa77c1fae1d",
+    "src/engine/bio/parsers.ts": "530b72bcbb83c48e94e0d0f49c3222cf763361af91096ec9092a489b8b5d9272",
+    "src/engine/llm/client.ts": "0fb1a96921f96424442438c8fb794a59cd95c388a585044c33b7edd0eb8e8639",
+    "src/engine/bio/scanner.ts": "a649878518ab5655dd3afb7de7df6d4ff5089fa314ae4adf833e48dae3b6e958",
+    "src/engine/docs/pipeline.ts": "f523b88fbe23baa07df0cb18cc91a2e4067fa5abaf2d7f78300603d91ecd4b25",
+    "src/engine/bio/types.ts": "684c134ef1c6c0a443d6b864146fc5f442d545daf543472dcea3ecb5e36e4085"
+  },
+  "doc_summaries": {}
 }

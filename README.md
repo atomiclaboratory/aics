@@ -91,32 +91,64 @@ Scans source code, optimizes context, and writes the `.ai-index.md` artifact.
 | `-v, --verbose` | Enable detailed logging | `false` |
 | `--watch` | Run in watch mode, regenerating on file changes | `false` |
 
+### `aics bio-gen` (Alias: `biogen`)
+
+Generates a **Bio-Holographic Index** for multi-omics datasets. Creates a semantic skeleton of massive biological files without reading their full binary content.
+
+**Usage:** `aics bio-gen [options]`
+
+| Option | Description | Default |
+| :--- | :--- | :--- |
+| `-i, --input <path>` | Input directory (Root of the study) | `CWD` |
+| `-o, --output <file>` | Output filename | `.ai-index.md` |
+| `-v, --verbose` | Enable detailed logging | `false` |
+
+**Supported Formats:**
+*   **CyTOF/Flow:** `.fcs` (Extracts Panel/Markers & Event Count)
+*   **Sequencing:** `.fastq.gz` (Extracts Read Length), `.bam` (Extracts Reference Genomes)
+*   **Single Cell:** `.h5ad` (Structure inference)
+*   **Clinical/Olink:** `.csv`, `.xlsx` (Extracts Schema & Sparsity/NaN rates)
+
 ### `aics check`
 
 Verifies that the current `.ai-index.md` is up-to-date with the codebase. Ideal for CI/CD.
 
-**Usage:** `aics check [options]`
+## 📄 Documentation & LLM Summaries
 
-| Option | Description |
-| :--- | :--- |
-| `--strict` | Exit with code 1 if any drift is detected. |
-| `--lock-only` | Fast check. Only verifies file hashes against `.aics-lock.json`. |
+AICS now supports indexing documentation files (`.md`, `.pdf`, `.docx`). If an API key is provided, it will use an LLM to generate a one-sentence summary of each document.
 
-### `aics inspect`
+**Supported Formats:**
+- Markdown (`.md`)
+- PDF (`.pdf`)
+- Word (`.docx`)
 
-Debugging tool to see exactly what the AI parser "sees" for a specific file.
+**Configuration:**
+Set environment variables or update `aics.config.json`.
 
-**Usage:** `aics inspect <filepath>`
+```bash
+# Option A: Environment Variables (Recommended)
+export OPENAI_API_KEY="sk-..."
+# OR
+export GEMINI_API_KEY="AIza..."
 
-### `aics init`
+aics gen
+```
 
-Scaffolds a new `aics.config.json` file in the current directory.
+```json
+// Option B: aics.config.json
+{
+  "llm": {
+    "provider": "openai",
+    "apiKey": "sk-...",
+    "model": "gpt-4o-mini"
+  }
+}
+```
 
-### `aics install-hook`
+The summaries will appear in a new `[Doc]` section in the generated index.
 
-Installs a Git `pre-commit` hook that runs `aics check --strict` to prevent committing stale indexes.
-
----
+**Cost-Efficient Caching:**
+AICS caches LLM summaries in `.aics-lock.json`. It will only call the API if the document content has changed, saving you money on repeated runs.
 
 ## ⚙️ Configuration Reference
 

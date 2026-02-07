@@ -33,3 +33,6 @@ assets/tree-sitter.wasm
 .idea/
 
 AGENTS.md
+
+tests/bioinformatics_data/*
+tests/programming_data/*

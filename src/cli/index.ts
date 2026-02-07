@@ -5,6 +5,7 @@ import { checkCommand } from './commands/check';
 import { initCommand } from './commands/init';
 import { installHookCommand } from './commands/install-hook';
 import { inspectCommand } from './commands/inspect';
+import { bioCommand } from './commands/bio';
 import { logger } from '../utils/logger';
 
 const program = new Command();
@@ -14,6 +15,7 @@ program
   .description('AI Context Sitemap Generator')
   .version('1.0.0')
   .addCommand(genCommand)
+  .addCommand(bioCommand)
   .addCommand(checkCommand)
   .addCommand(initCommand)
   .addCommand(installHookCommand)

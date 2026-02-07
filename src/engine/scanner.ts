@@ -30,7 +30,9 @@ export async function scanFiles(patterns: string[], cwd: string = process.cwd())
     cwd,
     dot: true, 
     ignore: fgIgnores,
-    absolute: true
+    absolute: true,
+    followSymbolicLinks: false,
+    throwErrorOnBrokenSymbolicLink: false
   });
 
   // 4. Filter

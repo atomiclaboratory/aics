@@ -10,11 +10,24 @@ export interface Config {
   secrets: {
     patterns: string[];
   };
+  llm?: {
+    provider: 'openai' | 'gemini';
+    apiKey: string;
+    model?: string;
+  };
 }
 
 export interface LockFile {
   version: string;
   files: Record<string, string>;
+  doc_summaries?: Record<string, { hash: string, summary: string }>;
+}
+
+export interface DocFile {
+  path: string;
+  type: string;
+  summary: string;
+  tokenCount: number;
 }
 
 export enum Tier {

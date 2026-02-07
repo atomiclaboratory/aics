@@ -1,11 +1,12 @@
-import { FileEntry, Tier } from '../types';
+import { FileEntry, Tier, DocFile } from '../types';
 import path from 'path';
 
 export function generateMarkdown(
   projectName: string, 
   version: string, 
   files: FileEntry[], 
-  anchors: Record<string, string[]>): string {
+  anchors: Record<string, string[]>,
+  docFiles?: DocFile[]): string {
     const lines: string[] = [];
 
     // 1. Header
@@ -37,6 +38,16 @@ export function generateMarkdown(
         
         lines.push(`[${category}] | ${keywords} | @${relPath}`);
     }
+    
+    // Add Documentation Files to Map if present
+    if (docFiles && docFiles.length > 0) {
+        for (const doc of docFiles) {
+            const relPath = path.relative(cwd, doc.path).replace(/\\/g, '/');
+            const summary = doc.summary.replace(/\n/g, ' ').slice(0, 100);
+            lines.push(`[Doc:${doc.type}] | ${summary} | @${relPath}`);
+        }
+    }
+    
     lines.push(``);
 
     // 4. The Skeletons
