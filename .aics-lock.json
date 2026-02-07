@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "files": {
-    "src/cli/index.ts": "7f4abccf0daac3f530088762f11dc9fac3502af30e724cd400dba562ebfb7151",
+    "src/cli/index.ts": "4e36bf1c1667d9a5b254ed78b7c5720f8665e2c9d4ed055f6e76c8a2aae27774",
     "src/core/cache.ts": "0854a77da3356d92a02d03a44df2aa9c631d1dd2e73147ad76e5bb0d1c9ac9aa",
     "src/core/config.ts": "a86df3dd978982b22de5a92032d50b41466a67bfbf79e0e103e25a8a575cc62c",
     "src/core/pipeline.ts": "7c284f3230d933f02a4b1d2c363267b1dce4e497339b10258993982fe9502c66",
